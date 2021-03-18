@@ -4,7 +4,7 @@ import androidx.room.*
 
 @Entity
 data class Todo(
-    @PrimaryKey val uid: Int?,
+    @PrimaryKey(autoGenerate = true) val uid: Long?,
     @ColumnInfo(name = "title") val title: String,
     @ColumnInfo(name = "timeLimit") val timeLimit: String?,
     @ColumnInfo(name = "done") val done: Boolean,
@@ -16,19 +16,19 @@ data class Todo(
 @Dao
 interface TodoDao {
     @Query("SELECT * FROM Todo")
-    fun fetchAll(): List<Todo>
+    suspend fun fetchAll(): List<Todo>
 
     @Query("SELECT * FROM Todo WHERE done = 1")
-    fun fetchDone(): List<Todo>
+    suspend fun fetchDone(): List<Todo>
 
     @Query("SELECT * FROM Todo WHERE done = 0")
-    fun fetchNotDone(): List<Todo>
+    suspend fun fetchNotDone(): List<Todo>
 
-    @Insert
-    fun insertAll(vararg todo: Todo)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(vararg todo: Todo): List<Long>
 
     @Delete
-    fun delete(todo: Todo)
+    suspend fun delete(todo: Todo)
 
 
 }

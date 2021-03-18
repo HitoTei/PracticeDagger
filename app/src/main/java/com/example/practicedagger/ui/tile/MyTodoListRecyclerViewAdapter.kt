@@ -1,41 +1,43 @@
-package com.example.practicedagger.ui
+package com.example.practicedagger.ui.tile
 
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.example.practicedagger.MyApplication
 import com.example.practicedagger.data.Todo
 import com.example.practicedagger.databinding.FragmentTodoItemBinding
-import com.example.practicedagger.ui.tile.TodoItemViewModel
+import com.example.practicedagger.ui.TodoListViewModel
+import javax.inject.Inject
 
-class MyTodoListRecyclerViewAdapter(
+class MyTodoListRecyclerViewAdapter constructor(
     private val fragment: Fragment,
 ) : RecyclerView.Adapter<MyTodoListRecyclerViewAdapter.ViewHolder>() {
 
+    @Inject
     lateinit var viewModel: TodoListViewModel
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
+        Log.d(TAG, "onAttachedToRecyclerView")
         viewModel =
             (fragment.requireActivity().application as MyApplication).appComponent.todoListViewModel()
         viewModel.run {
-            allChanged.observe(fragment, Observer {
+            allChanged.observe(fragment, {
                 viewModel.todoList = it as MutableList<Todo>
                 notifyDataSetChanged()
                 Log.d(TAG, "onAttachedToRecyclerView: allChanged")
             })
-            deletedPosition.observe(fragment, Observer {
+            deletedPosition.observe(fragment, {
                 notifyItemRemoved(it)
                 Log.d(TAG, "onAttachedToRecyclerView: deleted $it")
             })
-            changedPosition.observe(fragment, Observer {
+            changedPosition.observe(fragment, {
                 notifyItemChanged(it)
                 Log.d(TAG, "onAttachedToRecyclerView: changed $it")
             })
-            insertedPosition.observe(fragment, Observer {
+            insertedPosition.observe(fragment, {
                 notifyItemInserted(it)
                 Log.d(TAG, "onAttachedToRecyclerView: inserted $it")
             })
@@ -44,29 +46,33 @@ class MyTodoListRecyclerViewAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder.from(parent)
+        return ViewHolder.from(parent, viewModel)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = viewModel.todoList[position]
-        holder.bind(item, viewModel)
+        holder.bind(item)
     }
 
     override fun getItemCount(): Int = viewModel.todoList.size
 
-    class ViewHolder private constructor(private val binding: FragmentTodoItemBinding) :
+    class ViewHolder private constructor(
+        private val binding: FragmentTodoItemBinding,
+        private val viewModel: TodoListViewModel
+    ) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(todo: Todo, todoListViewModel: TodoListViewModel) {
-            binding.viewModel = TodoItemViewModel(todo, todoListViewModel)
+        fun bind(todo: Todo) {
+
+            binding.viewModel = TodoItemViewModel(todo, viewModel)
             binding.executePendingBindings()
         }
 
         companion object {
-            fun from(parent: ViewGroup): ViewHolder {
+            fun from(parent: ViewGroup, viewModel: TodoListViewModel): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val binding = FragmentTodoItemBinding.inflate(layoutInflater, parent, false)
-                return ViewHolder(binding)
+                return ViewHolder(binding, viewModel)
             }
         }
     }

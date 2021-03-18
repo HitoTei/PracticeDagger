@@ -13,29 +13,30 @@
         android:orientation="horizontal">
 
         <CheckBox
+            android:id="@+id/todo_done"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:checked="@{viewModel.todo.done}"
-            android:onClick="@{() -> viewModel.onCheckClicked()}"
-            />
+            android:onClick="@{() -> viewModel.changeDone()}" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:onClick="@{() -> viewModel.remove()}"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/item_number"
+                android:id="@+id/todo_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
                 android:layout_marginStart="@dimen/text_margin"
                 android:layout_marginTop="@dimen/text_margin"
                 android:text="@{viewModel.todo.title}"
-                android:textAppearance="?attr/textAppearanceListItem" />
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textSize="20sp" />
 
             <TextView
-                android:id="@+id/content"
+                android:id="@+id/todo_timelimit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"

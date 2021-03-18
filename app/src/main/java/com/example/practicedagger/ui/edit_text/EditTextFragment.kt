@@ -1,5 +1,6 @@
 package com.example.practicedagger.ui.edit_text
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,10 +12,10 @@ import com.example.practicedagger.databinding.FragmentEditTextAndButtonBinding
 class EditTextFragment : Fragment() {
     lateinit var viewModel: EditTextViewModel
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        viewModel =
-            (this.requireActivity().application as MyApplication).appComponent.editTextViewModel()
-        super.onCreate(savedInstanceState)
+    override fun onAttach(context: Context) {
+        val app = requireActivity().application as MyApplication
+        viewModel = app.appComponent.editTextViewModel()
+        super.onAttach(context)
     }
 
     override fun onCreateView(

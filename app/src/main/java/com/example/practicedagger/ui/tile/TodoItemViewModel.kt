@@ -8,9 +8,8 @@ import com.example.practicedagger.ui.TodoListViewModel
 
 class TodoItemViewModel(
     todo_item: Todo,
-    var todoListViewModel: TodoListViewModel
+    private val todoListViewModel: TodoListViewModel
 ) : ViewModel() {
-
     private val _todo = MutableLiveData<Todo>()
     val todo: LiveData<Todo>
         get() = _todo
@@ -19,10 +18,16 @@ class TodoItemViewModel(
         _todo.value = todo_item
     }
 
-    fun onCheckClicked() {
+    fun changeDone() {
         val item = todo.value ?: throw NullPointerException("TodoItemViewModel has no data")
         _todo.value = item.copy(done = !item.done)
-        todoListViewModel.change(item)
+        todoListViewModel.change(
+            _todo.value ?: throw java.lang.NullPointerException("Todo Is Null")
+        )
+    }
+
+    fun remove() {
+        todoListViewModel.delete(todo.value ?: return)
     }
 
 }
