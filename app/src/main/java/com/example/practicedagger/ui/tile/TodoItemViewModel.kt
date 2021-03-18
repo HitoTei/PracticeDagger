@@ -4,20 +4,25 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.practicedagger.data.Todo
-import java.lang.NullPointerException
+import com.example.practicedagger.ui.TodoListViewModel
 
 class TodoItemViewModel(
-    todo_item: Todo
-) : ViewModel(){
+    todo_item: Todo,
+    var todoListViewModel: TodoListViewModel
+) : ViewModel() {
+
     private val _todo = MutableLiveData<Todo>()
-    private val todo: LiveData<Todo>
+    val todo: LiveData<Todo>
         get() = _todo
+
     init {
         _todo.value = todo_item
     }
-    fun onCheckClicked(){
+
+    fun onCheckClicked() {
         val item = todo.value ?: throw NullPointerException("TodoItemViewModel has no data")
         _todo.value = item.copy(done = !item.done)
+        todoListViewModel.change(item)
     }
 
 }

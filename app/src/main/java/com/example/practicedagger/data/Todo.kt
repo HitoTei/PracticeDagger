@@ -4,11 +4,14 @@ import androidx.room.*
 
 @Entity
 data class Todo(
-    @PrimaryKey val uid: Int,
+    @PrimaryKey val uid: Int?,
     @ColumnInfo(name = "title") val title: String,
+    @ColumnInfo(name = "timeLimit") val timeLimit: String?,
     @ColumnInfo(name = "done") val done: Boolean,
-    @ColumnInfo(name = "timeLimit") val timeLimit: String,
-)
+) {
+    val timeList
+        get() = timeLimit ?: "なし"
+}
 
 @Dao
 interface TodoDao {
