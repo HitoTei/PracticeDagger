@@ -15,7 +15,7 @@ data class Todo(
 
 @Dao
 interface TodoDao {
-    @Query("SELECT * FROM Todo")
+    @Query("SELECT * FROM Todo ORDER BY uid DESC")
     suspend fun fetchAll(): List<Todo>
 
     @Query("SELECT * FROM Todo WHERE done = 1")
